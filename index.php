@@ -71,12 +71,14 @@
     $('input:radio[value=stickynav]').click(function(){
        if($('input:radio[value=stickynav]').is(':checked')){
            $(".stickynav-box").find("#nav").remove();
-           $(".stickynav-box").append('<input type="file" required="" name="nav" id="nav" onchange="readURLnav(this);">');
+            $(".stickynav-box").find(".label").remove();
+           $(".stickynav-box").append('<label class="d-block label">Navigation Image</label><input type="file" required="" name="nav" id="nav" onchange="readURLnav(this);">');
         }
     });
     $('input:radio[value=fixheader]').click(function(){
        if($('input:radio[value=fixheader]').is(':checked')){
            $(".stickynav-box").find("#nav").remove();
+           $(".stickynav-box").find(".label").remove();
         }
     });
   });
@@ -93,33 +95,33 @@
         <div class="overlay"></div>
         <img id="blah" src="demo-files/images/header.jpg" alt="your image" />
       </div>
-      <div class="" style="position: absolute;top: 100%;left: 20px;z-index: 999;">
-        <label class="d-block">
+      <div style="position: absolute;top: 100%;left: 20px;z-index: 999; background: lightblue; padding: 15px; border-radius: 0 0 10px 10px;">
+         <label class="d-block">
           <input type="radio" name="fixed" value="staticheader" checked="">
           <span>Static Header</span>
         </label>
         <label class="d-block">
           <input type="radio" name="fixed" value="fixheader">
-          <span>Fied Header</span>
+          <span>Fixed Header</span>
         </label>
         <div class="stickynav-box">
           <label class="d-block">
           <input type="radio" name="fixed" id="stickynav" value="stickynav">
-          <span>sticky nav not full Header</span>
+          <span>Sticky Navigation <small>(not full header)</small></span>
         </label>
         </div>
         <hr>
          <label class="d-block">
           <input type="radio" name="overlap" checked="checked" value="noverlap">
-          <span>Not overlap Header</span>
+          <span>Header Without Overlap</span>
         </label>
         <label class="d-block">
           <input type="radio" name="overlap" value="homeoverlap">
-          <span>overlap Header on Hompage</span>
+          <span>Header Overlapping on Homepage</span>
         </label>
          <label class="d-block">
           <input type="radio" name="overlap" value="overalloverlap">
-          <span>overlap Header on allpage</span>
+          <span>Header Overlapping Across All Pages</span>
         </label>
       </div>
     </header>
@@ -129,7 +131,7 @@
     </div>
     <main id="main">
      <div class="container" style="padding: 30px 15px;">
-      <div class="project-block">
+      <div class="project-block mb-5">
         <select class="form-control custom-select js-data-example-ajax required" name="pjname" id="ProjectName" required="required">
           <option></option>
           <?php
@@ -139,7 +141,7 @@
           foreach ($files2 as $key => $value) {
                        //echo $value.'<br>';
                        //$a = 'How are you?';
-            if (strpos($value, '.php') == false && $value != "." && $value != ".." && $value != "error_log" && $value != "demo-files" && $value != "template") {
+            if (strpos($value, '.php') == false && $value != "." && $value != ".." && $value != "error_log" && $value != "demo-files" && $value != "template" && $value != "template" && $value != ".git") {
              echo '<option>'.$value. '</option>';
            }
          }
@@ -151,7 +153,7 @@
        <select class="form-control custom-select js-data-example-ajax required" name="date" id="date" required="required"></select>
      </div>
      <div class="pages">
-      <h2>Pages</h2>
+      <h2 class="mb-4">Pages</h2>
       <div class="field">
         <ol>
           <li>
