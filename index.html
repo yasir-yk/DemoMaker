@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700&display=swap" rel="stylesheet"> 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+<script src="demo-files/js/functions.js"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth()+1; 
+  var yyyy = today.getFullYear();
+  if(dd<10) 
+  {
+    dd='0'+dd;
+  } 
+  var today = dd+'-'+mm+'-'+yyyy;
+  $("#demo").find('option').remove();
+  $("#ProjectName").on("change paste keyup",function() {
+    var checkboxvalue = $(this).val();
+    $("#demo").append("<option>demo1</option>");
+    $("#date").append("<option>"+ today +"</option>");
+    $.ajax({
+      type: "POST",
+      dataType: "json",
+      data:{ checkboxvalue : checkboxvalue},
+      url: "demo-files/ajax/filedir.php",
+      success: function(data){        
+        $("#demo").find('option').remove();
+         $("#demo").append("<option>demo1</option>");
+        $.each(data, function(i, order){
+           if('demo1' !== data[i]){
+            $("#demo").append("<option>" + data[i] + "</option>");
+          }
+        });  
+      }
+    });
+  });
+  $("#demo").on("change paste keyup",function() {
+    var subvalue = $(this).val();
+    var checkboxvalue = $("#ProjectName").val();
+    $.ajax({
+      type: "POST",
+      dataType: "json",
+      data:{ subvalue : subvalue, checkboxvalue:checkboxvalue},
+      url: "demo-files/ajax/filedir2.php",
+      success: function(data){        
+        $("#date").find('option').remove();
+         $("#date").append("<option>"+ today +"</option>");
+        $.each(data, function(i, order){
+          if(today !== data[i]){
+            $("#date").append("<option>" + data[i] + "</option>");
+          }
+       });  
+
+      }
+    });
+  });
+});
+</script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('input:checkbox[name=fixednav]').click(function(){
+       if($('input:checkbox[name=fixednav]').is(':checked')){
+           $("#wrapper").append('<input type="file" name="navheader" id="navheader">');
+        }
+    });
+    $('input:radio[value=stickynav]').click(function(){
+       if($('input:radio[value=stickynav]').is(':checked')){
+           $(".stickynav-box").find("#nav").remove();
+            $(".stickynav-box").find(".label").remove();
+           $(".stickynav-box").append('<label class="d-block label">Navigation Image</label><input type="file" required="" name="nav" id="nav" onchange="readURLnav(this);">');
+        }
+    });
+    $('input:radio[value=fixheader]').click(function(){
+       if($('input:radio[value=fixheader]').is(':checked')){
+           $(".stickynav-box").find("#nav").remove();
+           $(".stickynav-box").find(".label").remove();
+        }
+    });
+  });
+</script>
+<link rel="stylesheet" href="demo-files/css/all.css">
+</head>
+<body>
+  <form action="uploads.php" method="post" enctype="multipart/form-data"  id="wrapper">
+    <header id="header">
+      <div class="inner">
+        <div class="header-field">
+          <input type="file" name="header" id="header" onchange="readURLheader(this);">
+        </div>
+        <div class="overlay"></div>
+        <img id="blah" src="demo-files/images/header.jpg" alt="your image" />
+      </div>
+      <div style="position: absolute;top: 100%;left: 20px;z-index: 999; background: lightblue; padding: 15px; border-radius: 0 0 10px 10px;">
+         <label class="d-block">
+          <input type="radio" name="fixed" value="staticheader" checked="">
+          <span>Static Header</span>
+        </label>
+        <label class="d-block">
+          <input type="radio" name="fixed" value="fixheader">
+          <span>Fixed Header</span>
+        </label>
+        <div class="stickynav-box">
+          <label class="d-block">
+          <input type="radio" name="fixed" id="stickynav" value="stickynav">
+          <span>Sticky Navigation <small>(not full header)</small></span>
+        </label>
+        </div>
+        <hr>
+         <label class="d-block">
+          <input type="radio" name="overlap" checked="checked" value="noverlap">
+          <span>Header Without Overlap</span>
+        </label>
+        <label class="d-block">
+          <input type="radio" name="overlap" value="homeoverlap">
+          <span>Header Overlapping on Homepage</span>
+        </label>
+         <label class="d-block">
+          <input type="radio" name="overlap" value="overalloverlap">
+          <span>Header Overlapping Across All Pages</span>
+        </label>
+      </div>
+    </header>
+    <div class="sticky-btn">
+      <input type="file" name="sticky" id="sticky" onchange="readURLsticky(this);">
+      <img id="stickyimg" src="demo-files/images/sticky.jpg" alt="your image" />
+    </div>
+    <main id="main">
+     <div class="container" style="padding: 30px 15px;">
+      <div class="project-block mb-5">
+        <select class="form-control custom-select js-data-example-ajax required" name="pjname" id="ProjectName" required="required">
+          <option></option>
+          <?php
+          $dir    = './';
+          $files1 = scandir($dir);
+          $files2 = scandir($dir, 1);
+          foreach ($files2 as $key => $value) {
+                       //echo $value.'<br>';
+                       //$a = 'How are you?';
+            if (strpos($value, '.php') == false && $value != "." && $value != ".." && $value != "error_log" && $value != "demo-files" && $value != "template" && $value != "template" && $value != ".git") {
+             echo '<option>'.$value. '</option>';
+           }
+         }
+         ?>
+       </select>
+       <br><br>
+       <select class="form-control custom-select js-data-example-ajax required" name="demo" id="demo" required="required"></select>
+        <br><br>
+       <select class="form-control custom-select js-data-example-ajax required" name="date" id="date" required="required"></select>
+     </div>
+     <div class="pages">
+      <h2 class="mb-4">Pages</h2>
+      <div class="field">
+        <ol>
+          <li>
+            <input type="text" name="name[]" id="pageName1" required="required" value="home">
+            <input type="file" name="fileToUpload[]" required="required" id="fileToUpload"> <br><br>
+            <label for="slideimages">Slider:</label> <br>
+            <input type="file" multiple="multiple" name="slideshow[]" id="slideshow">
+          </li>
+        </ol>
+        <a href="#" class="addpage" id="add">Add More Page</a>
+      </div>
+    </div>
+  </div>
+  <input type="submit" value="Upload Task" name="submit" class="btn-submit">
+</main>
+<footer id="footer">
+  <div class="inner">
+    <div class="footer-field">
+      <input type="file" name="footer" id="footer" onchange="readURLfooter(this);">
+    </div>
+    <div class="overlay"></div>
+    <img id="blah2" src="demo-files/images/footer.jpg" alt="your image" />
+  </div>
+</footer>
+</form>
+</body>
+</html>
